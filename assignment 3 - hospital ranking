@@ -1,0 +1,96 @@
+## this script was written to help answer most questions on the assignment 3.
+
+## setting file location, default values, define classes
+setwd("E:/R_projects/r_homework/Assignment4")
+outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+as.character(chosenstate)
+spec <- "heart attack"
+as.character(spec)
+as.data.frame(data)
+as.data.frame(result_rank)
+chosen_criteria <- 10
+X <- 1 ##Default value 
+numb <- X
+
+## The function below will take 3 inputs: state, health condition, and rank number
+## A correction for unknown states was not written
+
+
+best <- function(chosenstate, spec, X) {
+##     
+  if (spec == "heart attack") {
+  chosen_criteria <- 11
+  }  else if (spec == "heart failure") {
+  chosen_criteria <- 17
+  }  else if (spec =="pneumonia") {
+  chosen_criteria <- 23 
+  }  else {
+  stop("invalid medical condition")
+  }
+
+  ## Strategy:  to creat a subset including the state and the chosen medical condition criteria
+  ## to use the order command to creat an ascending order list
+  ## to apply a rank from smallest to largest, up to the max number of rows
+    
+    data <- subset(outcome, (outcome[7]==chosenstate), select = c(2, chosen_criteria))
+    colnames(data) <- c("hospital.name", "rate")   ## applying names to the columns to make it neat
+    data$rate <- suppressWarnings(as.numeric(data$rate))   ## MUST set the rate column to as.numeric, or else it won't sort properply
+    result <- data[order(data$rate, data$hospital.name),]
+    result <- na.omit(result)
+    result_rank <- data.frame(result, c(1:nrow(result)))
+    colnames(result_rank) <-c("hospital.name", "rate", "rank")   
+    
+    if (X == "best") {
+      numb <- 1
+    }  else if (X == "worst") {
+      numb <- nrow(result)
+    }  else {
+      numb <- X
+    }  
+    
+
+    print(result_rank[numb, ])
+
+}
+
+
+
+
+
+rankall <- function(spec, X) {        
+  ##     
+  if (spec == "heart attack") {
+    chosen_criteria <- 11
+  }  else if (spec == "heart failure") {
+    chosen_criteria <- 17
+  }  else if (spec =="pneumonia") {
+    chosen_criteria <- 23 
+  }  else {
+    stop("invalid medical condition")
+  }
+  
+  
+  data <- subset(outcome, outcome[7], select = c(2, chosen_criteria))
+  colnames(data) <- c("hospital.name", "state", "rate")
+  data$rate <- suppressWarnings(as.numeric(data$rate))
+  result <- data[order(data$rate, data$hospital.name),]
+  result <- na.omit(result)
+  result_rank <- data.frame(result, c(1:nrow(result)))
+  colnames(result_rank) <-c("hospital.name", "rate", "rank")   
+  
+  if (X == "best") {
+    numb <- 1
+  }  else if (X == "worst") {
+    numb <- nrow(result)
+  }  else {
+    numb <- X
+  }  
+  
+  
+  ##fewest_death <- data[which.min(data[2]), ]
+  ##      fewest_death <- data[which.min(data[2]), 
+  ##print(result_rank)
+  ##    print(result_rank)
+  ## result
+  print(result_rank)
+}
